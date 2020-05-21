@@ -5,6 +5,7 @@ Pipeline to identify Epromoter like clusters using RNA-seq and ChIP-seq data
 Input File:
   input_data/
     1. Name of genome annotation file: mm10.refGene.txt.gz
+    
         wget -c -O mm9.refGene.txt.gz http://hgdownload.soe.ucsc.edu/goldenPath/mm9/database/refGene.txt.gz
         wget -c -O mm10.refGene.txt.gz http://hgdownload.soe.ucsc.edu/goldenPath/mm10/database/refGene.txt.gz
         wget -c -O hg19.refGene.txt.gz http://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/refGene.txt.gz
