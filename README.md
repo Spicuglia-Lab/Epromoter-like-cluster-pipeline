@@ -4,6 +4,7 @@ Pipeline to identify Epromoter like clusters using RNA-seq and ChIP-seq data
 
 Input File:
   input_data/
+  
     1. Name of genome annotation file: mm10.refGene.txt.gz
     
         wget -c -O mm9.refGene.txt.gz http://hgdownload.soe.ucsc.edu/goldenPath/mm9/database/refGene.txt.gz
@@ -30,25 +31,26 @@ Input File:
     5. MACS Score filterscore: 10 <filter score can be defined by user>
 
 Output Files:
-    output/exp_bedgraph/
-     Vierbuchen_2017_RefSeq_4hr_vs_ctl.mm10.bedgraph: Expression Bedgraph file
-     Vierbuchen_2017_RefSeq_4hr_vs_ctl.mm10.induced_genes
-     output/tf_analysis/
-     combined_gene_5p_tf_peak_calls_data.bed
-     gene_5p_tf_peak_calls_bed_tool_clust.bed
-     gene_promoter_cluster.table
-     induced_genes_5p_3p_coordinates.bed
-     induced_genes_5p_coordinates.bed
-     induced_genes_bed_tool_clust.bed
-     induced_gene_tss
 
-     induced_genes_final_cluster.bed
-     cluster_gene_frequency_at_100kb_data.txt
-     cluster_genes_frequency_at_100kb_plot.png
-     dist_all_induced_genes.distance
-     least_distant_induced_genes.distance
-     gene_least_distant_barplot.png
-     gene_tss_peak.table
-     gene_promoter_cluster_tf_binding.table
-     bubble_chart_gene_promoter_cluster_tf_binding_frequency.table
-     TF_binding_gene_promoter_frequency_bubble_plot.png
+    output/exp_bedgraph/
+       Vierbuchen_2017_RefSeq_4hr_vs_ctl.mm10.bedgraph: Expression Bedgraph file
+       Vierbuchen_2017_RefSeq_4hr_vs_ctl.mm10.induced_genes
+       output/tf_analysis/
+       combined_gene_5p_tf_peak_calls_data.bed
+       gene_5p_tf_peak_calls_bed_tool_clust.bed
+       gene_promoter_cluster.table
+       induced_genes_5p_3p_coordinates.bed
+       induced_genes_5p_coordinates.bed
+       induced_genes_bed_tool_clust.bed
+       induced_gene_tss
+
+       induced_genes_final_cluster.bed
+       cluster_gene_frequency_at_100kb_data.txt
+       cluster_genes_frequency_at_100kb_plot.png
+       dist_all_induced_genes.distance
+       least_distant_induced_genes.distance
+       gene_least_distant_barplot.png
+       gene_tss_peak.table
+       gene_promoter_cluster_tf_binding.table
+       bubble_chart_gene_promoter_cluster_tf_binding_frequency.table
+       TF_binding_gene_promoter_frequency_bubble_plot.png
