@@ -35,7 +35,7 @@ Output Files:
     output/exp_bedgraph/
        Vierbuchen_2017_RefSeq_4hr_vs_ctl.mm10.bedgraph: Expression Bedgraph file
        Vierbuchen_2017_RefSeq_4hr_vs_ctl.mm10.induced_genes
-       output/tf_analysis/
+    output/tf_analysis/
        combined_gene_5p_tf_peak_calls_data.bed
        gene_5p_tf_peak_calls_bed_tool_clust.bed
        gene_promoter_cluster.table
