@@ -368,6 +368,8 @@ cwd = os.getcwd()+'/'
 refseq_gtf = 'hg38.refGene.txt.gz'
 rna_expression_file = 'RNAseq K562 IFNa6hr Filtered Log2FC1_padj0.001.txt'
 tf_name = 'STAT2'
+
+'''
 fc = 0
 #tf_chiqseq_bedfile = 'IRF9_IFNa_6h.hg38.bed'
 #tf_chiqseq_bedfile = 'IRF1_IFNa_30min_ENCFF791AFK.bed.gz'
@@ -376,7 +378,6 @@ fc = 0
 #tf_chiqseq_bedfile = 'STAT1_IFNa_6h_ENCFF020PTC.bed.gz'
 tf_chiqseq_bedfile = 'STAT2_IFNa_30min_ENCFF685JSX.bed.gz'
 #tf_chiqseq_bedfile = 'STAT2_6h_ENCFF201CUI.bed.gz'
-
 '''
 #TAKING INPUT FROM USER
 refseq_gtf = input('\n   Enter the name of genome annotation file: ')
@@ -385,7 +386,6 @@ tf_name = input('\n   Enter the name of TF: ')
 tf_chiqseq_bedfile = input('\n   Enter the name of TF chipseq bed file: ')
 fc = int(input('\n   MACS Score filterscore: '))
 print('\n')
-'''
 
 expression_bedgraph=Expression_bedgraph()
 #expression_bedgraph.induced_genes(rna_expression_file,refseq_gtf)
