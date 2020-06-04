@@ -48,7 +48,7 @@ class Expression_bedgraph:
         self.expression_file = expression_file
         self.gtf = gtf
 
-        expression = pd.read_csv('input_data/'+self.expression_file,header=0,sep='\t',usecols=['Gene','log2FC'])
+        expression = pd.read_csv('input_data/'+self.expression_file,header=0,sep='\t',usecols=['Gene','DESeq2_log2FoldChange'])
         expression.columns = ['name2','log2FoldChange']
 
         induced_gene_exp_data = expression[(expression.log2FoldChange > 1)]
@@ -215,7 +215,8 @@ class Tf_peak_tss_binding:
         self.object = object
         self.filterscore = filterscore
 
-        tf_peak_file = pd.read_csv('input_data/'+self.filename,sep="\t",header=0,names=['chr','start','end','score'])        #macs2 $1,$2,$3,$5
+        tf_peak_file = pd.read_csv('input_data/'+self.filename,sep="\t",header=0,usecols=[0,1,2,6],names=['chr','start','end','score'])        #macs2 $1,$2,$3,$5
+        #tf_peak_file = pd.read_csv('input_data/'+self.filename,sep="\t",header=0,names=['chr','start','end','score'])        #macs2 $1,$2,$3,$5
         tf_peak_file['score'] = tf_peak_file['score'].apply(pd.to_numeric, downcast='float', errors='coerce')
         filter = tf_peak_file['score'] > self.filterscore
 
@@ -349,7 +350,7 @@ class TfBindingGenePromoterFrequencyBubblePlot:
     def bubble_plot(self,bubble_chart_table_file):
         print("##### TF Binding Gene Promoter Frequency Bubble Plot Generating...")
         self.bubble_chart_table_file = bubble_chart_table_file
-        df = pd.read_csv(self.bubble_chart_table_file,sep="\t",header=0)
+        df = pd.read_csv('output/tf_analysis/'+self.bubble_chart_table_file,sep="\t",header=0)
 
         p = (ggplot(df)
          + aes(x='number of promoters per cluster', y='number of promoter binding TFs in cluster', size='Frequency Percentage')
@@ -362,14 +363,21 @@ class TfBindingGenePromoterFrequencyBubblePlot:
 
 cwd = os.getcwd()+'/'
 
-'''
-#FILE NAMES PRESENT IN INPUT_DATA DIRECTORY MUST BE DECIDED
-refseq_gtf = 'mm10.refGene.txt'
-rna_expression_file = 'Vierbuchen_2017_RefSeq_4hr_vs_ctl.de.expression'
-tf_name = 'Fos_0hr_B1'
-tf_chiqseq_bedfile = 'Fos_0hr_B1_SRR3660244_45_46_peaks.narrowPeak'
-'''
 
+#FILE NAMES PRESENT IN INPUT_DATA DIRECTORY MUST BE DECIDED
+refseq_gtf = 'hg38.refGene.txt.gz'
+rna_expression_file = 'RNAseq K562 IFNa6hr Filtered Log2FC1_padj0.001.txt'
+tf_name = 'STAT2'
+fc = 0
+#tf_chiqseq_bedfile = 'IRF9_IFNa_6h.hg38.bed'
+#tf_chiqseq_bedfile = 'IRF1_IFNa_30min_ENCFF791AFK.bed.gz'
+#tf_chiqseq_bedfile = 'IRF1_IFNa_6h_ENCFF172XHL.bed.gz'
+#tf_chiqseq_bedfile = 'STAT1_30min_ENCFF068CSN.bed.gz'
+#tf_chiqseq_bedfile = 'STAT1_IFNa_6h_ENCFF020PTC.bed.gz'
+tf_chiqseq_bedfile = 'STAT2_IFNa_30min_ENCFF685JSX.bed.gz'
+#tf_chiqseq_bedfile = 'STAT2_6h_ENCFF201CUI.bed.gz'
+
+'''
 #TAKING INPUT FROM USER
 refseq_gtf = input('\n   Enter the name of genome annotation file: ')
 rna_expression_file = input('\n   Enter the name of RNA expression file: ')
@@ -377,10 +385,10 @@ tf_name = input('\n   Enter the name of TF: ')
 tf_chiqseq_bedfile = input('\n   Enter the name of TF chipseq bed file: ')
 fc = int(input('\n   MACS Score filterscore: '))
 print('\n')
-
+'''
 
 expression_bedgraph=Expression_bedgraph()
-expression_bedgraph.induced_genes(rna_expression_file,refseq_gtf)
+#expression_bedgraph.induced_genes(rna_expression_file,refseq_gtf)
 
 extract_induced_genes=Extract_induced_genes_coordinates()
 induced_genes_tss = extract_induced_genes.induced_genes(rna_expression_file,refseq_gtf)
