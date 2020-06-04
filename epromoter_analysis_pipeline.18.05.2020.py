@@ -215,8 +215,8 @@ class Tf_peak_tss_binding:
         self.object = object
         self.filterscore = filterscore
 
-        tf_peak_file = pd.read_csv('input_data/'+self.filename,sep="\t",header=0,usecols=[0,1,2,6],names=['chr','start','end','score'])        #macs2 $1,$2,$3,$5
-        #tf_peak_file = pd.read_csv('input_data/'+self.filename,sep="\t",header=0,names=['chr','start','end','score'])        #macs2 $1,$2,$3,$5
+        #tf_peak_file = pd.read_csv('input_data/'+self.filename,sep="\t",header=0,usecols=[0,1,2,6],names=['chr','start','end','score'])        #macs2 $1,$2,$3,$5
+        tf_peak_file = pd.read_csv('input_data/'+self.filename,sep="\t",header=0,names=['chr','start','end','score'])        #macs2 $1,$2,$3,$5
         tf_peak_file['score'] = tf_peak_file['score'].apply(pd.to_numeric, downcast='float', errors='coerce')
         filter = tf_peak_file['score'] > self.filterscore
 
