@@ -39,6 +39,7 @@ Input File:
     No filter score = 0\n
 
     OUTPUT FILES:
+    Output folder name is: <TF Name>_<Induced Condition>_Promoter_<bps upstream from TSS>_<bps downstream from TSS>_dist<clustering distance_criteria>
 
     exp_bedgraph/
        expression.mm10.bedgraph: Expression Bedgraph file
