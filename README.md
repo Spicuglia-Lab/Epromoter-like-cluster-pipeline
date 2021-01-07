@@ -41,8 +41,10 @@ Input File:
     OUTPUT FILES:
 
     exp_bedgraph/
-       Vierbuchen_2017_RefSeq_4hr_vs_ctl.mm10.bedgraph: Expression Bedgraph file
-       Vierbuchen_2017_RefSeq_4hr_vs_ctl.mm10.induced_genes
+       expression.mm10.bedgraph: Expression Bedgraph file
+       expression.mm10.induced_genes: all the induced genes in refSeq
+       induced_genes_not_in_refseq_data.exp: genes not found in the refSeq annotation files
+       
     tf_analysis/
        bubble_chart_gene_promoter_cluster_tf_binding_frequency.table
        cluster_gene_frequency_at_100kb_data.txt
