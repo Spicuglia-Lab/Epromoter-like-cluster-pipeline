@@ -12,45 +12,44 @@ Input File:
         wget -c -O hg19.refGene.txt.gz http://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/refGene.txt.gz
         wget -c -O hg38.refGene.txt.gz http://hgdownload.soe.ucsc.edu/goldenPath/hg38/database/refGene.txt.gz
 
-    2. Name of RNA expression file: induced_genes.expression
-        <tab separated file: with header line>
-        <columns: Gene	log2FC>
-        Gene	log2FC	
-        Xkr4		-1.1665	
-        Mrpl15	 0.3167	
-        Lypla1	 0.8388	
+    2: Expression Data file required: 'induced_genes.expression'
+    A tab separated file with at least two columns with below header line.    
+    Example:
+        gene\tlog2FC
+        NUDT4\t2.01
+        AHSA1\t1.98
+        EPB42\t0.31\n
+        
+    3: PeakFile: peak.narrowPeak
+    Tab separated file with 4 columns: ['chr','start','end','macs score']. No header line in peak file.    
+    Example:
+        chr1\t5639\t5705\t310
+        chr2\t3048\t3049\t572.8
+        chr1\t1150\t1509\t620.32\n
+        
+    4: TAD File: tad.bed (OPTIONAL)    
+    Tab separated file with 4 columns: ['chr','start','end']. No header line in peak file.    
+    Example:
+        chr3\t5639\t5705
+        chr1\t3048\t3049
+        chr2\t1150\t1509\n
 
-    3. Name of TF: Fos
-    4. Name of TF chipseq bed file: peak_file.narrowPeak
-        <tab separated file; No header line>
-        <columns: chr; start; end; macs_score>
-        chr1	1265	1562	168	
-        chr1	9235	9467	178
-        chrX	6785	6956	98
-        chrY	3641	3758	517
-    5. MACS Score filterscore: 10 <filter score can be defined by user>
+    NOTE:
+    Macs Cutoff Filter Score must be defined by user
+    No filter score = 0\n
 
-Output Files:
+    OUTPUT FILES:
 
-    output/exp_bedgraph/
+    exp_bedgraph/
        Vierbuchen_2017_RefSeq_4hr_vs_ctl.mm10.bedgraph: Expression Bedgraph file
        Vierbuchen_2017_RefSeq_4hr_vs_ctl.mm10.induced_genes
-    output/tf_analysis/
-       combined_gene_5p_tf_peak_calls_data.bed
-       gene_5p_tf_peak_calls_bed_tool_clust.bed
-       gene_promoter_cluster.table
-       induced_genes_5p_3p_coordinates.bed
-       induced_genes_5p_coordinates.bed
-       induced_genes_bed_tool_clust.bed
-       induced_gene_tss
-
-       induced_genes_final_cluster.bed
+    tf_analysis/
+       bubble_chart_gene_promoter_cluster_tf_binding_frequency.table
        cluster_gene_frequency_at_100kb_data.txt
        cluster_genes_frequency_at_100kb_plot.png
-       dist_all_induced_genes.distance
-       least_distant_induced_genes.distance
        gene_least_distant_barplot.png
-       gene_tss_peak.table
        gene_promoter_cluster_tf_binding.table
-       bubble_chart_gene_promoter_cluster_tf_binding_frequency.table
+       least_distant_induced_genes.distance
+       observed_vs_randomly_selected_genes_distribution.png
+       randomly_selected_1_times.184_induced_genes.least_distance
        TF_binding_gene_promoter_frequency_bubble_plot.png
