@@ -578,7 +578,7 @@ least_distant_induced_genes= Genesleastdistant()
 least_distant_induced_genes.genes_least_distnce('induced_genes_5p_coordinates.bed')
 
 random_selection_least_distant_genes = Randomization()
-genes_in_genome, refgene_data = random_selection_least_distant_genes.unique_genes_in_genome('mm9.refGene.txt')
+genes_in_genome, refgene_data = random_selection_least_distant_genes.unique_genes_in_genome(refseq_gtf)
 random_selection_least_distant_genes.random_selection_genes(rna_expression_file,genes_in_genome, refgene_data)
 
 tf_peak_tss_binding = Tf_peak_tss_binding()
