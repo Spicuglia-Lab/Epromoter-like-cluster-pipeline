@@ -3,18 +3,28 @@ Pipeline to identify Epromoter like clusters using RNA-seq and ChIP-seq data
 
 ### Dependent envioroment
 System envioroment: Linux, python>3.7
-python libraries:
-datetime, pandas, plotnine, numpy, os, subprocess, seaborn, itertools, matplotlib,scipy, pybedtools
 
+python libraries:
+```
+datetime, pandas, plotnine, numpy, os, subprocess, seaborn, itertools, matplotlib,scipy, pybedtools
+```
 ### Required Input files:
 All the required input files must be avilable in folder: 'input_data'
 
 1: RefSeq GTF file: 'hg38.refGene.txt.gz'
+
+   Reference gene annotation files were downloaded from the UCSC Genome Browser: 
+   
+   human (hg19: https://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/refGene.txt.gz, hg38: http://hgdownload.soe.ucsc.edu/goldenPath/hg38/database/refGene.txt.gz)
+   
+   mouse (mm9: https://hgdownload.soe.ucsc.edu/goldenPath/mm9/database/refGene.txt.gz, mm10: https://hgdownload.soe.ucsc.edu/goldenPath/mm10/database/refGene.txt.gz)
+
+   Format:
 ```
-   [bin,name,chrom,strand,txStart,txEnd,cdsStart,cdsEnd,exonCount,exonStarts,exonEnds,score,name2,cdsStartStat,cdsEndStat,exonFrames]
+[bin,name,chrom,strand,txStart,txEnd,cdsStart,cdsEnd,exonCount,exonStarts,exonEnds,score,name2,cdsStartStat,cdsEndStat,exonFrames]
 ```
 
-2: Expression Data file required: 'induced genes expression'
+2: Expression Data file required: induced genes expression (gene names and log2 fold change between stimualated and control)
    
    A tab separated file with at least two columns with below header line.
 ```
@@ -25,7 +35,7 @@ Example:
         EPB42\t0.31\n
 ```
 
-3: PeakFile: TF_peak.bed
+3: PeakFile: TF_peak.bed (transcrition factor binding peaks from ChIP-seq data)
    
    Tab separated file with 3 columns: ['chr','start','end']. No header line in peak file.
    ```
