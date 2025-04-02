@@ -158,7 +158,8 @@ class Extract_induced_genes_coordinates:
         self.coordinatefile = coordinatefile
         self.genelist = genelist
 
-        induced_gene_data = pd.read_csv(output_folder_name+'/exp_bedgraph/'+self.genelist.split('.')[0]+'.'+self.coordinatefile.split('.')[0]+'.induced_genes',sep="\t",header=0)
+        #induced_gene_data = pd.read_csv(output_folder_name+'/exp_bedgraph/'+self.genelist.split('.')[0]+'.'+self.coordinatefile.split('.')[0]+'.induced_genes',sep="\t",header=0)
+        induced_gene_data = pd.read_csv(output_folder_name+'/exp_bedgraph/'+self.genelist.split('.')[0]+'.'+self.coordinatefile.split('.')[0]+'.induced_genes',sep="\t",header=None)
         induced_gene_data.columns = ['gene','log2FC']
 
         refgene_col = ["bin","name","chrom","strand","txStart","txEnd","cdsStart","cdsEnd","exonCount","exonStarts","exonEnds","score","name2","cdsStartStat","cdsEndStat","exonFrames"]
@@ -241,9 +242,9 @@ class Inducedgenesclustering:
         final_cluster = final_cluster[final_cluster.duplicated(subset='clust1',keep=False)]
         order_final_cluster = pd.DataFrame(final_cluster['clust1'].unique(),columns=['clust1'])
         order_final_cluster['clust2'] = order_final_cluster.index+1
-        print(final_cluster)
+        #print(final_cluster)
         final_cluster = pd.merge(final_cluster,order_final_cluster,on='clust1')
-        print(final_cluster)
+        #print(final_cluster)
         final_cluster.to_csv(output_folder_name+'/tf_analysis/induced_genes_final_cluster.bed',sep="\t",header=None,index=False)
         # print('  Induced Gene Cluster file is generated:\n\t'+output_folder_name+'/tf_analysis/induced_genes_final_cluster.bed\n')
 
@@ -396,7 +397,7 @@ class Tf_peak_tss_binding:
         self.induced_gene_tss = induced_gene_tss
         self.filterscore = filterscore
 
-        #======Jing 2024-11-12========
+        #======2024-11-12========
         #solve TF peak input score problem
         #tf_peak_file = pd.read_csv('input_data/'+self.filename,sep="\t",header=0,usecols=[0,1,2,6],names=['chr','start','end','score'])        #macs2 $1,$2,$3,$5
         # tf_peak_file = pd.read_csv('input_data/'+self.filename,sep="\t",header=0,names=['chr','start','end','score'])        #macs2 $1,$2,$3,$5
@@ -582,6 +583,11 @@ class EnhancedTfBindingAnalysis:
         gene_tss=pd.read_csv(output_folder_name+'/tf_analysis/induced_gene_tss',sep="\t",header=0,usecols = ['chrom','strand','txStart','txEnd','name2','tss'])
         induced_tss_promoter = refgene_data[refgene_data['name2'].isin(gene_tss['name2'])]
         
+        #remove dup rows
+        induced_tss_promoter = induced_tss_promoter.drop_duplicates()
+        #sort
+        induced_tss_promoter = induced_tss_promoter.sort_values(by=['chrom', 'promoter_start'])
+        
         # save TSS promoter
         output_path = f"{self.output_folder}/tf_analysis/induced_alt_tss_promoters.bed"
         induced_tss_promoter[['chrom', 'promoter_start', 'promoter_end', 'name2']].to_csv(
@@ -726,13 +732,29 @@ for index, row in induced_genes_5p.iterrows():
 #========consider divergent promoter or close genes(two genes<2kb)=========
 # for each row, update number of promoter binding TFs in cluster
 for index, row in gene_promoter_cluster_tf_binding.iterrows():
-    if row['number of promoter binding TFs in cluster'] == 2 and row['TSS'] != 'NA':
+    if row['TSS'] != 'NA':
         tss_values = [int(x) for x in row['TSS'].split(',') if x.strip().isdigit()]
-        if len(tss_values) >= 2:  # 确保至少有两个TSS值
+        
+        # case1: number of promoter binding TFs in cluster == 2 
+        if row['number of promoter binding TFs in cluster'] == 2 and len(tss_values) >= 2:
             dist = abs(tss_values[0] - tss_values[1])
             if dist < 2000:
                 gene_promoter_cluster_tf_binding.at[index, 'number of promoter binding TFs in cluster'] = 1
-
+        
+        # case2:  number of promoter binding TFs in cluster == 3 
+        elif row['number of promoter binding TFs in cluster'] == 3 and len(tss_values) >= 3:
+            # tss distance
+            dist1 = abs(tss_values[0] - tss_values[1])
+            dist2 = abs(tss_values[1] - tss_values[2])
+            dist3 = abs(tss_values[0] - tss_values[2])
+            
+            # update number of promoter binding TFs in cluster
+            if (dist1 < 2000 and dist2 < 2000) or (dist1 < 2000 and dist3 < 2000) or (dist2 < 2000 and dist3 < 2000):
+                # if all tss distance < 2000, number of promoter binding TFs in cluster=1
+                gene_promoter_cluster_tf_binding.at[index, 'number of promoter binding TFs in cluster'] = 1
+            elif dist1 < 2000 or dist2 < 2000 or dist3 < 2000:
+                # if only one tss distance < 2000, number of promoter binding TFs in cluster=2
+                gene_promoter_cluster_tf_binding.at[index, 'number of promoter binding TFs in cluster'] = 2
 
 
 #====2025-02-10======
@@ -747,6 +769,27 @@ enhanced_analysis = EnhancedTfBindingAnalysis(
 
 # get TF_binding_promoters.txt
 enhanced_analysis.enhanced_tf_binding_analysis(gene_promoter_cluster_tf_binding)
+
+
+
+#==========re-calculate number of promoters per cluster/flag=============
+induced_alt_tss_promoters = pd.read_csv(output_folder_name+'/tf_analysis/'+'induced_alt_tss_promoters.bed', sep='\t', header=None)
+induced_alt_tss_promoters = induced_alt_tss_promoters.drop_duplicates()
+
+# count genes in induced_alt_tss_promoters.bed
+gene_counts = induced_alt_tss_promoters[3].value_counts()
+
+def calculate_counts_and_flag(genes):
+    gene_list = genes.split(',')
+    total_count = sum(gene_counts.get(gene, 0) for gene in gene_list)
+    flag = 'U' if total_count > 1 else 'F'
+    return total_count, flag
+
+# apply function for each line
+gene_promoter_cluster_tf_binding['number of promoters per cluster'], gene_promoter_cluster_tf_binding['flag'] = zip(*gene_promoter_cluster_tf_binding['genes in cluster'].apply(calculate_counts_and_flag))
+
+
+
 
 
 #====add gene promoter coordinate======
@@ -820,21 +863,19 @@ epromoter_cluster_res = epromoter_cluster_res.drop('flag', axis=1)
 # gene_promoter_cluster_tf_binding.to_csv(output_folder_name+'/gene_promoter_cluster_tf_binding_Epromoter.table', sep='\t', index=False)
 # epromoter_cluster_res.to_csv(output_folder_name+'/Epromoter_cluster', sep='\t', index=False)
 
-# save into new file
-gene_promoter_cluster_tf_binding.to_csv(
-    os.path.join(output_folder_name, 'gene_promoter_cluster_tf_binding.txt'), 
-    sep='\t', 
-    index=False
-)
+# # save into new file
+# gene_promoter_cluster_tf_binding.to_csv(
+#     os.path.join(output_folder_name, 'gene_promoter_cluster_tf_binding.txt'), 
+#     sep='\t', 
+#     index=False
+# )
 
-epromoter_cluster_res.to_csv(
-    os.path.join(output_folder_name, 'Epromoter_cluster.txt'), 
-    sep='\t', 
-    index=False
-)
+# epromoter_cluster_res.to_csv(
+#     os.path.join(output_folder_name, 'Epromoter_cluster.txt'), 
+#     sep='\t', 
+#     index=False
+# )
 
-print("gene_promoter_cluster_tf_binding.txt has been generated.")
-print("Epromoter_cluster.txt has been generated.")
 
 
 
@@ -856,6 +897,30 @@ if os.path.exists(tf_binding_promoters_file) and os.path.getsize(tf_binding_prom
     #When the number of promoter-binding TFs in the cluster is 0, recalculate the number of genes in TF_binding_gene.
     final_output.loc[final_output['number of promoter binding TFs in cluster'] == 0, 'number of promoter binding TFs in cluster'] = \
     final_output['TF_binding_gene'].apply(lambda x: len(x.split(',')) if x != 'None' else 0)
+    
+    #==add column num_of_TF_binding_genes==
+    final_output['num_of_TF_binding_genes'] = (
+    final_output['TF_binding_gene']
+    .apply(lambda x: len(str(x).split(',')) if pd.notna(x) and x != "None" else 0)
+    )
+    
+    # new_column_order(make sure column name right)
+    new_column_order = [
+        'cluster number',
+        'number of genes per cluster',
+        'number of promoters per cluster',
+        'genes in cluster',
+        'number of promoter binding TFs in cluster',
+        'TF_binding_gene',
+        'num_of_TF_binding_genes', 
+        'chr_promoter',
+        'promoter_start',
+        'promoter_end'
+    ]
+
+    # new_column_order
+    final_output = final_output.reindex(columns=new_column_order)
+    
 
     # save res
     final_output.to_csv(
@@ -864,8 +929,19 @@ if os.path.exists(tf_binding_promoters_file) and os.path.getsize(tf_binding_prom
         index=False
     )
 
-    # Epromoter
-    epromoter_res = final_output[final_output['number of promoter binding TFs in cluster'] == 1]
+    
+    #== Epromoter_cluster: induced genes > TF binding genes ==
+    #epromoter_res = final_output[final_output['number of promoter binding TFs in cluster'] == 1]
+    # Epromoter_cluster condition
+    ep_condition = (
+        (final_output['number of genes per cluster'] > final_output['num_of_TF_binding_genes']) &
+        (final_output['number of promoter binding TFs in cluster'] >= 1)
+    )
+
+    # Epromoter_cluster filter
+    epromoter_res = final_output[ep_condition].copy()
+    
+    
     epromoter_res.to_csv(
         f"{output_folder_name}/Epromoter_cluster.txt",
         sep="\t",
@@ -873,13 +949,19 @@ if os.path.exists(tf_binding_promoters_file) and os.path.getsize(tf_binding_prom
     )
 
 
+print("gene_promoter_cluster_tf_binding.txt has been generated.")
+print("Epromoter_cluster.txt has been generated.")
+
 
 #======2025-02-10========
 # Calculate Statistical Information
 # Obtain statistical information from the gene_promoter_cluster_tf_binding data
-number_of_induced_genes = len(induced_genes_tss)  
-number_of_clusters = len(gene_promoter_cluster_tf_binding)  
-number_of_epromoter_clusters = len(epromoter_cluster_res)  
+induced_gene_exp = pd.read_csv('input_data/'+rna_expression_file, sep='\t')
+number_of_induced_genes = len(induced_gene_exp)  
+induced_gene_clusters = pd.read_csv(output_folder_name+'/gene_promoter_cluster_tf_binding.txt', sep='\t')
+number_of_clusters = len(induced_gene_clusters)  
+Ep_clusters = pd.read_csv(output_folder_name+'/Epromoter_cluster.txt', sep='\t')
+number_of_epromoter_clusters = len(Ep_clusters)  
 
 # Write the statistical information to the file Cluster_summary_stats.txt
 summary_stats_file = os.path.join(output_folder_name, 'Cluster_summary_stats.txt')
@@ -901,6 +983,7 @@ print(f"Cluster_summary_stats.txt has been generated.")
 #         'induced_genes_final_cluster.bed','induced_gene_tss','mm9.refGene.all.tss.txt']
 #print('##### Temporary files are deleted...')
 #[os.remove(os.path.join(output_folder_name+'/tf_analysis/',f)) for f in list]
+
 
 try:
    # delete tf_analysis
