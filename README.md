@@ -65,8 +65,8 @@ Output files: Cluster_summary_stats.txt, gene_promoter_cluster_tf_binding.txt, E
 
 The information in Cluster_summary_stats.txt like:
 ```
-Number_of_induced_genes: 1980
-Number_of_clusters: 54
+Number_of_induced_genes: 675
+Number_of_clusters: 75
 Number_of_Epromoter_clusters: 7
 ```
 The gene_promoter_cluster_tf_binding.txt is induced gene clusters.
@@ -75,14 +75,14 @@ The Epromoter_cluster.txt is Epromoter clusters.
 
 The cluster file inlcude 9 columns, like: 
 ```
-cluster number, number of genes per cluster, number of promoters per cluster, genes in cluster, number of promoter binding TFs in cluster, TF_binding_gene, chr_promoter, promoter_start, promoter_end
-7	2	2	PMVK,CKS1B	1	PMVK	chr1	154908195	154910195
-12	2	2	STIP1,GPR137	1	STIP1	chr11	63951743	63953743
-14	2	2	C11orf52,CRYAB	1	CRYAB	chr11	111781494	111783494
-17	2	2	BAZ2A,PTGES3	1	PTGES3	chr12	57081068	57083068
-19	2	2	SCARB1,UBC	1	UBC	chr12	125398196	125400196
-21	2	2	SNAP23,LRRC57	1	SNAP23	chr15	42786831	42788831
-22	2	2	EPB42,TGM7	1	EPB42	chr15	43512323	43514323
+cluster number, number of genes per cluster, number of promoters per cluster, genes in cluster, number of promoter binding TFs in cluster, TF_binding_gene, num_of_TF_binding_genes, chr_promoter, promoter_start, promoter_end
+9	2	4	PMVK,CKS1B	1	PMVK	1	chr1	154908195	154910195
+14	2	6	STIP1,GPR137	1	STIP1	1	chr11	63952642	63954642
+18	2	7	C11orf52,CRYAB	1	CRYAB	1	chr11	111781494	111783494
+21	2	5	BAZ2A,PTGES3	1	PTGES3	1	chr12	57081192	57083192
+24	2	3	SCARB1,UBC	1	UBC	1	chr12	125398196	125400196
+27	2	3	SNAP23,LRRC57	1	SNAP23	1	chr15	42786831	42788831
+28	2	3	EPB42,TGM7	1	EPB42	1	chr15	43512323	43514323
 ```
 
 ### reference
